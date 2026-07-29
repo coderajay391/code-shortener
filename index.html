@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Shortener - Clean, Fast & Offline Code Minifier</title>
+  <meta name="description" content="A simple, responsive, offline code shortener tool to optimize HTML, CSS, JS, and plain text." />
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <!-- Main Header -->
+    <header class="app-header">
+      <div class="header-branding">
+        <div class="logo-icon" aria-hidden="true">
+          <!-- Code Scissors / Shortener Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+            <line x1="12" y1="4" x2="12" y2="20" stroke-dasharray="2 2"></line>
+          </svg>
+        </div>
+        <div class="header-titles">
+          <h1>Code Shortener</h1>
+          <p class="tagline">Offline Code Cleaner &amp; Whitespace Remover</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Sample Snippet Button for Quick Testing -->
+        <button id="btn-sample" class="btn btn-secondary btn-sm" title="Load sample code snippet">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+          </svg>
+          <span>Load Sample</span>
+        </button>
+
+        <!-- Dark Mode Toggle Button -->
+        <button id="btn-theme-toggle" class="btn btn-icon" aria-label="Toggle dark mode" title="Switch Theme (Light/Dark)">
+          <svg id="theme-icon-sun" class="theme-icon hidden" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg id="theme-icon-moon" class="theme-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- App Description & Instructions -->
+    <section class="intro-banner">
+      <p>
+        Easily paste HTML, CSS, JavaScript, or any text to strip unnecessary whitespace, extra line breaks, and tabs while preserving clean code readability.
+      </p>
+    </section>
+
+    <!-- Options & Settings Bar -->
+    <section class="options-bar">
+      <div class="options-group">
+        <label class="checkbox-container">
+          <input type="checkbox" id="opt-remove-comments" />
+          <span class="checkmark"></span>
+          <span class="label-text">Remove Comments (<code>//</code>, <code>/* */</code>, <code>&lt;!-- --&gt;</code>)</span>
+        </label>
+        
+        <label class="checkbox-container">
+          <input type="checkbox" id="opt-single-line" />
+          <span class="checkmark"></span>
+          <span class="label-text">Single Line Minify</span>
+        </label>
+
+        <label class="checkbox-container">
+          <input type="checkbox" id="opt-auto-copy" />
+          <span class="checkmark"></span>
+          <span class="label-text">Auto-Copy After Shortening</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Statistics Panel -->
+    <section class="stats-grid" aria-label="Code statistics">
+      <div class="stat-card">
+        <span class="stat-label">Original Characters</span>
+        <span class="stat-value" id="stat-orig-chars">0</span>
+        <span class="stat-sub" id="stat-orig-lines">0 lines</span>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-label">Shortened Characters</span>
+        <span class="stat-value" id="stat-short-chars">0</span>
+        <span class="stat-sub" id="stat-short-lines">0 lines</span>
+      </div>
+
+      <div class="stat-card highlight-card">
+        <span class="stat-label">Characters Removed</span>
+        <span class="stat-value" id="stat-removed-chars">0</span>
+        <span class="stat-sub" id="stat-saved-percent">0% saved</span>
+      </div>
+    </section>
+
+    <!-- Main Workspace (Dual Textarea Columns) -->
+    <main class="workspace-grid">
+      <!-- Input Column -->
+      <div class="editor-column">
+        <div class="editor-header">
+          <label for="input-code" class="editor-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Paste Your Code
+          </label>
+          <div class="editor-meta">
+            <span id="counter-input" class="counter-badge">0 chars</span>
+          </div>
+        </div>
+
+        <div class="textarea-wrapper">
+          <textarea
+            id="input-code"
+            placeholder="Paste your HTML, CSS, JavaScript, or plain text here..."
+            spellcheck="false"
+            aria-label="Input code to shorten"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Output Column -->
+      <div class="editor-column">
+        <div class="editor-header">
+          <label for="output-code" class="editor-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Shortened Code
+          </label>
+          <div class="editor-meta">
+            <span id="counter-output" class="counter-badge">0 chars</span>
+          </div>
+        </div>
+
+        <div class="textarea-wrapper">
+          <textarea
+            id="output-code"
+            readonly
+            placeholder="Shortened code will appear here..."
+            spellcheck="false"
+            aria-label="Shortened code output"
+          ></textarea>
+        </div>
+      </div>
+    </main>
+
+    <!-- Toolbar Action Buttons -->
+    <section class="toolbar-actions">
+      <!-- Shorten Code (Primary Action) -->
+      <button id="btn-shorten" class="btn btn-primary btn-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+        <span>Shorten Code</span>
+        <kbd class="btn-kbd">Ctrl + Enter</kbd>
+      </button>
+
+      <!-- Copy Output -->
+      <button id="btn-copy" class="btn btn-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span>Copy Output</span>
+      </button>
+
+      <!-- Download as File -->
+      <button id="btn-download" class="btn btn-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>Download</span>
+      </button>
+
+      <!-- Clear Fields -->
+      <button id="btn-clear" class="btn btn-danger">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+        <span>Clear</span>
+      </button>
+    </section>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Code Shortener &copy; 2026 &bull; 100% Client-Side &amp; Offline Ready</p>
+      <p class="shortcut-tip">Pro Tip: Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> (or <kbd>Cmd</kbd> + <kbd>Enter</kbd>) to shorten code instantly.</p>
+    </footer>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Main JavaScript File -->
+  <script src="script.js"></script>
+</body>
+</html>
